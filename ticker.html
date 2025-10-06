@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Real-Time Stock Ticker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: black;
+            color: white;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+        .ticker-container {
+            display: flex;
+            gap: 50px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 300px;
+        }
+        th, td {
+            padding: 5px;
+            text-align: left;
+        }
+        th {
+            border-bottom: 2px solid cyan;
+            border-color: #444;
+        }
+        .positive {
+            color: #0f0;
+        }
+        .negative {
+            color: #f00;
+        }
+        .neutral {
+            color: yellow;
+        }
+    </style>
+</head>
+<body>
+    <div class="ticker-container">
+        <table id="leftTable">
+            <tr>
+                <th>Symbol</th>
+                <th>Change</th>
+                <th>Last</th>
+            </tr>
+        </table>
+        <table id="rightTable">
+            <tr>
+                <th>Symbol</th>
+                <th>Change</th>
+                <th>Last</th>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+        const stocks = ["AAPL", "TSLA", "MSFT", "GOOG", "AMZN", "NFLX", "NVDA", "META", "IBM", "ORCL"];
+
+        function getRandomStockData(symbol) {
+            let price = (Math.random() * 200).toFixed(2);
+            let change = (Math.random() * 4 - 2).toFixed(2); // -2 to +2
+            let time = new Date().toLocaleTimeString();
+
+            return {
+                symbol,
+                change,
+                price,
+                time
+            };
+        }
+
+        function renderTable(tableId, stockData) {
+            const table = document.getElementById(tableId);
+            table.innerHTML = `
+                <tr>
+                    <th>Symbol</th>
+                    <th>Change</th>
+                    <th>Price</th>
+                    <th>Time</th>
+                </tr>
+            `;
+
+            stockData.forEach(stock => {
+                let changeClass = "neutral";
+                if (stock.change > 0) changeClass = "positive";
+                else if (stock.change < 0) changeClass = "negative";
+
+                let row = `
+                    <tr>
+                        <td>${stock.symbol}</td>
+                        <td class="${changeClass}">${stock.change}</td>
+                        <td>${stock.price}</td>
+                        <td>${stock.time}</td>
+                    </tr>
+                `;
+                table.innerHTML += row;
+            });
+        }
+
+        function updateTicker() {
+            let leftStocks = stocks.slice(0, stocks.length / 2).map(s => getRandomStockData(s));
+            let rightStocks = stocks.slice(stocks.length / 2).map(s => getRandomStockData(s));
+
+            renderTable("leftTable", leftStocks);
+            renderTable("rightTable", rightStocks);
+        }
+
+        updateTicker();
+        setInterval(updateTicker, 3000);
+    </script>
+</body>
+</html>
